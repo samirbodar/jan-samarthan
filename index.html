@@ -3,96 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>પોસ્ટર મેકર - પરશોતમભાઈ બોડર</title>
+    <title>જનસમર્થન પોસ્ટર</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; text-align: center; margin: 0; padding: 10px; }
-        
-        /* पोस्टर का घेरा */
-        .canvas-container { position: relative; display: inline-block; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); margin-bottom: 20px; }
-        canvas { max-width: 100%; height: auto; display: block; border-radius: 10px; }
-
-        /* कंट्रोल बॉक्स को बड़ा और साफ़ बनाया गया है */
-        .controls-card { 
-            max-width: 500px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 20px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-        }
-        
-        .section-title { font-size: 20px; font-weight: bold; color: #333; margin-bottom: 15px; }
-        
-        /* इनपुट बॉक्स बड़े करने के लिए */
-        input[type="text"] { 
-            width: 90%; 
-            padding: 15px; 
-            font-size: 18px; 
-            border: 2px solid #ddd; 
-            border-radius: 10px; 
-            margin-bottom: 20px; 
-            outline: none;
-        }
-        
-        input[type="text"]:focus { border-color: #ff9933; }
-
-        /* बड़े बटन्स */
-        .btn-upload { 
-            display: block; 
-            width: 100%; 
-            background: #007bff; 
-            color: white; 
-            padding: 18px; 
-            font-size: 18px; 
-            font-weight: bold; 
-            border-radius: 10px; 
-            border: none; 
-            cursor: pointer; 
-            margin-bottom: 15px;
-        }
-
-        .btn-download { 
-            display: block; 
-            width: 100%; 
-            background: #ff9933; 
-            color: white; 
-            padding: 18px; 
-            font-size: 20px; 
-            font-weight: bold; 
-            border-radius: 10px; 
-            border: none; 
-            cursor: pointer; 
-        }
-
+        body { font-family: 'Arial', sans-serif; background-color: #f8f9fa; text-align: center; margin: 0; padding: 5px; }
+        .main-wrapper { max-width: 500px; margin: 0 auto; }
+        .canvas-container { background: white; padding: 5px; border-radius: 15px 15px 0 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        canvas { width: 100%; height: auto; display: block; border-radius: 10px 10px 0 0; }
+        .controls-card { background: white; padding: 20px; border-radius: 0 0 15px 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 1px solid #eee; }
+        .section-label { font-size: 16px; font-weight: bold; color: #555; margin: 10px 0 5px 0; text-align: left; }
+        input[type="text"] { width: 90%; padding: 12px; font-size: 16px; border: 1.5px solid #ff9933; border-radius: 8px; margin-bottom: 15px; outline: none; }
+        .btn-upload { width: 100%; background: #e7f1ff; color: #007bff; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; border: 2px dashed #007bff; cursor: pointer; margin-bottom: 10px; }
+        .btn-download { width: 100%; background: #ff9933; color: white; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 8px; border: none; margin-top: 10px; cursor: pointer; }
         #imageInput { display: none; }
     </style>
 </head>
 <body>
-
-    <div class="canvas-container">
-        <canvas id="posterCanvas"></canvas>
+    <div class="main-wrapper">
+        <div class="canvas-container">
+            <canvas id="posterCanvas"></canvas>
+        </div>
+        <div class="controls-card">
+            <div class="section-label">૧. ફોટો અપલોડ કરો:</div>
+            <button class="btn-upload" onclick="document.getElementById('imageInput').click()">+ ફોટો પસંદ કરો</button>
+            <input type="file" id="imageInput" accept="image/*" onchange="handleImage(event)">
+            <div class="section-label">૨. તમારું નામ લખો:</div>
+            <input type="text" id="nameInput" placeholder="અહિં નામ લખો..." oninput="drawCanvas()">
+            <button class="btn-download" onclick="downloadPoster()">પોસ્ટર સેવ કરો (Download)</button>
+        </div>
     </div>
-
-    <div class="controls-card">
-        <div class="section-title">Step 1: તમારો ફોટો અપલોડ કરો</div>
-        <button class="btn-upload" onclick="document.getElementById('imageInput').click()">📁 ફોટો પસંદ કરો</button>
-        <input type="file" id="imageInput" accept="image/*" onchange="handleImage(event)">
-
-        <div class="section-title">Step 2: તમારું નામ લખો</div>
-        <input type="text" id="nameInput" placeholder="અહિં તમારું નામ લખો..." oninput="drawCanvas()">
-
-        <button class="btn-download" onclick="downloadPoster()">📥 પોસ્ટર ડાઉનલોડ કરો</button>
-    </div>
-
     <script>
         const canvas = document.getElementById('posterCanvas');
         const ctx = canvas.getContext('2d');
         const nameInput = document.getElementById('nameInput');
-        
         let templateImg = new Image();
         let userImg = null;
         
-        // टेम्पलेट लोड करें
         templateImg.src = 'poster.jpg'; 
         templateImg.onload = () => {
             canvas.width = templateImg.width;
@@ -113,29 +58,26 @@
         function drawCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(templateImg, 0, 0);
-
             if (userImg) {
                 ctx.save();
                 ctx.beginPath();
-                // सर्कल की पोजीशन (810, 785) और रेडियस (175) आपके पोस्टर के हिसाब से सेट है
-                ctx.arc(815, 788, 165, 0, Math.PI * 2); 
+                // सर्कल की सही पोजीशन
+                ctx.arc(812, 1025, 155, 0, Math.PI * 2); 
                 ctx.clip();
-                ctx.drawImage(userImg, 650, 623, 330, 330); 
+                ctx.drawImage(userImg, 657, 870, 310, 310); 
                 ctx.restore();
             }
-
-            // नाम की सेटिंग्स
             const name = nameInput.value || "";
             ctx.font = "bold 45px Arial";
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
-            // नाम की पोजीशन आपके पोस्टर के ऑरेंज बॉक्स पर
-            ctx.fillText(name, 822, 928); 
+            // नाम की सही पोजीशन
+            ctx.fillText(name, 822, 1265); 
         }
 
         function downloadPoster() {
             const link = document.createElement('a');
-            link.download = 'My_Poster.png';
+            link.download = 'BJP_JanSamarthan.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
