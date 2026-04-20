@@ -39,7 +39,7 @@
     let templateImg = new Image();
     let userImg = null;
 
-    // फाइल का नाम वही रखें जो आपने GitHub पर अपलोड की है
+    // पक्का करें कि GitHub पर आपकी फोटो का नाम 'poster.jpg' ही हो
     templateImg.src = 'poster.jpg?v=' + new Date().getTime(); 
     
     templateImg.onload = () => {
@@ -65,27 +65,27 @@
         if (userImg) {
             ctx.save();
             ctx.beginPath();
-            // --- फोटो के गोले की सटीक सेटिंग ---
-            // X=812 (Center), Y=1805 (काफी नीचे), Radius=285 (बड़ा गोला)
-            ctx.arc(812, 1805, 285, 0, Math.PI * 2); 
+            // --- फोटो के गोले की एकदम सटीक सेटिंग ---
+            // X=1220, Y=2710 (पोस्टर के नीचे वाले बड़े गोले के लिए)
+            ctx.arc(1220, 2710, 420, 0, Math.PI * 2); 
             ctx.clip();
-            // फोटो को गोले में फिट करना
-            ctx.drawImage(userImg, 527, 1520, 570, 570); 
+            // फोटो को फिट करना
+            ctx.drawImage(userImg, 800, 2290, 840, 840); 
             ctx.restore();
         }
 
-        // --- नाम की सटीक सेटिंग ---
+        // --- नाम की एकदम सटीक सेटिंग ---
         const name = nameInput.value || "";
-        ctx.font = "bold 80px Arial"; // नाम थोड़ा बड़ा कर दिया है
+        ctx.font = "bold 120px Arial"; // नाम का साइज बढ़ा दिया है
         ctx.fillStyle = "white";
         ctx.textAlign = "center";
-        // सबसे नीचे वाले ऑरेंज बॉक्स की पोजीशन
-        ctx.fillText(name, 822, 2275); 
+        // सबसे नीचे वाले "તમારું નામ" बॉक्स की पोजीशन
+        ctx.fillText(name, 1235, 3410); 
     }
 
     function downloadPoster() {
         const link = document.createElement('a');
-        link.download = 'Jan_Samarthan_Poster.png';
+        link.download = 'Vijay_Sankalp_Poster.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
     }
