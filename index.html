@@ -3,25 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>વિજય સંકલ્પ રેલી - પરશોતમભાઈ બોડર</title>
-    
-    <meta property="og:title" content="વિજય સંકલ્પ રેલી - પરશોતમભાઈ બોડર">
-    <meta property="og:description" content="15-શેડુભાર તાલુકા પંચાયતના ઉમેદવાર શ્રી પરશોતમભાઈ બોડરની વિજય સંકલ્પ રેલીમાં પધારવા સૌને ભાવભર્યું નિમંત્રણ છે. હું જઈ રહ્યો છું, તમે પણ આવો!">
-    <meta property="og:image" content="poster.jpg">
-    <meta property="og:type" content="website">
-
+    <title>તમારો ફોટો લગાવો - પરશોતમભાઈ બોડર</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #fdf2e9; text-align: center; padding: 20px; margin: 0; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
-        img { width: 100%; height: auto; border-radius: 10px; }
-        .btn { display: inline-block; margin-top: 20px; background: #ff9933; color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 18px; }
+        body { font-family: 'Arial', sans-serif; background-color: #fdf2e9; text-align: center; margin: 0; padding: 20px; }
+        .canvas-container { position: relative; display: inline-block; margin-top: 20px; border: 2px solid #ff9933; border-radius: 10px; overflow: hidden; }
+        canvas { max-width: 100%; height: auto; cursor: pointer; }
+        .controls { margin-top: 20px; background: white; padding: 20px; border-radius: 15px; display: inline-block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        input { padding: 10px; margin: 10px; border: 1px solid #ccc; border-radius: 5px; width: 200px; }
+        .btn { background: #ff9933; color: white; padding: 12px 25px; text-decoration: none; border-radius: 50px; font-weight: bold; border: none; cursor: pointer; }
+        #imageInput { display: none; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <img src="poster.jpg" alt="BJP Campaign Poster">
-        <br>
-        <a href="poster.jpg" download class="btn">પોસ્ટર ડાઉનલોડ કરો</a>
+
+    <h2>તમારો ફોટો અને નામ સેટ કરો</h2>
+    
+    <div class="canvas-container">
+        <canvas id="posterCanvas"></canvas>
     </div>
+
+    <div class="controls">
+        <input type="text" id="nameInput" placeholder="તમારું નામ અહિં લખો" oninput="drawCanvas()">
+        <br>
+        <button class="btn" onclick="document.getElementById('imageInput').click()">ફોટો પસંદ કરો</button>
+        <input type="file" id="imageInput" accept="image/*" onchange="handleImage(event)">
+        <br><br>
+        <button class="btn" style="background: #28a745;" onclick="downloadPoster()">પોસ્ટર ડાઉનલોડ કરો</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('posterCanvas');
+        const ctx = canvas.getContext('2d');
+        const nameInput = document.getElementById('nameInput');
+        
+        let templateImg = new Image();
+        let userImg = null;
+        
+        // 1. टेम्पलेट लोड करें (वही फाइल जो आपने GitHub पर डाली है)
+        templateImg.src = 'poster.jpg'; 
+        templateImg.onload = () => {
+            canvas.width = templateImg.width;
+            canvas.height = templateImg.height;
+            drawCanvas();
+        };
+
+        // 2. यूजर की फोटो हैंडल करें
+        function handleImage(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                userImg = new Image();
+                userImg.onload = drawCanvas;
+                userImg.src = event.target.result;
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        // 3. कैनवस पर सब कुछ ड्रा करें
+        function drawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // टेम्पलेट ड्रा करें
+            ctx.drawImage(templateImg, 0, 0);
+
+            // यूजर की फोटो ड्रा करें (सर्कल वाले हिस्से में)
+            if (userImg) {
+                ctx.save();
+                ctx.beginPath();
+                // सर्कल की पोजीशन (ये आपके पोस्टर के हिसाब से एडजस्ट की गई है)
+                ctx.arc(810, 785, 175, 0, Math.PI * 2); 
+                ctx.clip();
+                ctx.drawImage(userImg, 635, 610, 350, 350); // x, y, width, height
+                ctx.restore();
+            }
+
+            // यूजर का नाम ड्रा करें
+            const name = nameInput.value || "";
+            ctx.font = "bold 40px Arial";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.fillText(name, 825, 930); // नाम की पोजीशन
+        }
+
+        // 4. डाउनलोड फंक्शन
+        function downloadPoster() {
+            const link = document.createElement('a');
+            link.download = 'My_Campaign_Poster.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
 </body>
 </html>
