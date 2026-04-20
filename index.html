@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>પોસ્ટર મેકર</title>
+    <title>જનસમર્થન - પોસ્ટર મેકર</title>
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #f0f2f5; text-align: center; margin: 0; padding: 10px; }
         .wrapper { max-width: 500px; margin: 0 auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
@@ -25,7 +25,7 @@
         <input type="file" id="imageInput" style="display:none" accept="image/*" onchange="handleImage(event)">
 
         <label class="label">૨. નામ લખો:</label>
-        <input type="text" id="nameInput" placeholder="તમારું નામ..." oninput="drawCanvas()">
+        <input type="text" id="nameInput" placeholder="તમારું નામ અહિં લખો..." oninput="drawCanvas()">
 
         <button class="btn-down" onclick="downloadPoster()">📥 ડાઉનલોડ કરો</button>
     </div>
@@ -38,6 +38,7 @@
     let templateImg = new Image();
     let userImg = null;
 
+    // File name must be poster.jpg on GitHub
     templateImg.src = 'poster.jpg?v=' + new Date().getTime(); 
     templateImg.onload = () => {
         canvas.width = templateImg.width;
@@ -65,10 +66,10 @@
         if (userImg) {
             ctx.save();
             ctx.beginPath();
-            // स्मार्ट पोजीशन: पोस्टर की चौड़ाई का 50% और ऊंचाई का 78% (सफेद गोले के लिए)
-            let circleX = w * 0.81; 
-            let circleY = h * 0.77; 
-            let radius = w * 0.16; 
+            // Photo position adjusted slightly down
+            let circleX = w * 0.812; 
+            let circleY = h * 0.785; 
+            let radius = w * 0.165; 
             
             ctx.arc(circleX, circleY, radius, 0, Math.PI * 2);
             ctx.clip();
@@ -76,17 +77,20 @@
             ctx.restore();
         }
 
-        const name = nameInput.value || "";
-        ctx.font = "bold " + (w * 0.045) + "px Arial";
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        // नाम की पोजीशन: ऊंचाई का लगभग 93% हिस्सा
-        ctx.fillText(name, w * 0.82, h * 0.93);
+        // Display name only if input is not empty
+        const name = nameInput.value;
+        if (name) {
+            ctx.font = "bold " + (w * 0.048) + "px Arial";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            // Name box position
+            ctx.fillText(name, w * 0.822, h * 0.928);
+        }
     }
 
     function downloadPoster() {
         const link = document.createElement('a');
-        link.download = 'Poster.png';
+        link.download = 'Jan_Samarthan_Poster.png';
         link.href = canvas.toDataURL();
         link.click();
     }
