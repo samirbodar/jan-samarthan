@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>જનસમર્થન - પોસ્ટર મેકર</title>
+    <title>પોસ્ટર મેકર - જનસમર્થન</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f0f2f5; text-align: center; margin: 0; padding: 10px; }
-        .wrapper { max-width: 500px; margin: 0 auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
-        canvas { width: 100%; height: auto; display: block; }
-        .controls { padding: 20px; border-top: 2px solid #eee; }
-        .label { font-weight: bold; margin: 10px 0 5px 0; text-align: left; display: block; }
-        input[type="text"] { width: 90%; padding: 12px; border: 2px solid #ff9933; border-radius: 8px; margin-bottom: 10px; }
-        .btn-up { width: 100%; background: #007bff; color: white; padding: 14px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; }
-        .btn-down { width: 100%; background: #28a745; color: white; padding: 16px; font-weight: bold; border-radius: 8px; border: none; margin-top: 10px; cursor: pointer; }
+        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; text-align: center; margin: 0; padding: 10px; }
+        .wrapper { max-width: 500px; margin: 0 auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+        canvas { width: 100%; height: auto; display: block; background: #fff; }
+        .controls { padding: 25px; border-top: 1px solid #eee; background: #ffffff; }
+        .label { font-weight: bold; color: #333; margin: 15px 0 8px 0; text-align: left; display: block; font-size: 15px; }
+        input[type="text"] { width: 92%; padding: 14px; font-size: 16px; border: 2px solid #ff9933; border-radius: 10px; outline: none; margin-bottom: 15px; }
+        .btn-up { width: 100%; background: #007bff; color: white; padding: 16px; font-weight: bold; border-radius: 10px; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-up:hover { background: #0056b3; }
+        .btn-down { width: 100%; background: #28a745; color: white; padding: 18px; font-size: 18px; font-weight: bold; border-radius: 10px; border: none; margin-top: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -20,14 +21,14 @@
 <div class="wrapper">
     <canvas id="posterCanvas"></canvas>
     <div class="controls">
-        <label class="label">૧. ફોટો અપલોડ કરો:</label>
+        <label class="label">૧. તમારો ફોટો અપલોડ કરો:</label>
         <button class="btn-up" onclick="document.getElementById('imageInput').click()">📸 ફોટો પસંદ કરો</button>
         <input type="file" id="imageInput" style="display:none" accept="image/*" onchange="handleImage(event)">
 
-        <label class="label">૨. નામ લખો:</label>
-        <input type="text" id="nameInput" placeholder="તમારું નામ અહિં લખો..." oninput="drawCanvas()">
+        <label class="label">૨. તમારું નામ લખો:</label>
+        <input type="text" id="nameInput" placeholder="અહિં નામ ટાઈપ કરો..." oninput="drawCanvas()">
 
-        <button class="btn-down" onclick="downloadPoster()">📥 ડાઉનલોડ કરો</button>
+        <button class="btn-down" onclick="downloadPoster()">📥 પોસ્ટર સેવ કરો</button>
     </div>
 </div>
 
@@ -38,8 +39,9 @@
     let templateImg = new Image();
     let userImg = null;
 
-    // File name must be poster.jpg on GitHub
+    // पक्का करें कि GitHub पर आपकी फाइल का नाम poster.jpg ही हो
     templateImg.src = 'poster.jpg?v=' + new Date().getTime(); 
+    
     templateImg.onload = () => {
         canvas.width = templateImg.width;
         canvas.height = templateImg.height;
@@ -63,13 +65,14 @@
         const w = canvas.width;
         const h = canvas.height;
 
+        // १. फोटो की सटीक पोजीशन (घेरे के एकदम बीच में)
         if (userImg) {
             ctx.save();
             ctx.beginPath();
-            // Photo position adjusted slightly down
+            // फोटो का घेरा पोस्टर की ऊंचाई के ७९% हिस्से पर सेट किया गया है
             let circleX = w * 0.812; 
-            let circleY = h * 0.785; 
-            let radius = w * 0.165; 
+            let circleY = h * 0.792; 
+            let radius = w * 0.163; 
             
             ctx.arc(circleX, circleY, radius, 0, Math.PI * 2);
             ctx.clip();
@@ -77,22 +80,43 @@
             ctx.restore();
         }
 
-        // Display name only if input is not empty
+        // २. नाम टाइप करने पर ही पुराने टेक्स्ट को छुपाना और नया लिखना
         const name = nameInput.value;
         if (name) {
+            // पुराने "તમારું નામ" को ढकने के लिए एक छोटा ऑरेंज पैच
+            ctx.fillStyle = "#f39333"; // आपके पोस्टर का ऑरेंज कलर
+            ctx.beginPath();
+            ctx.roundRect(w * 0.69, h * 0.902, w * 0.26, h * 0.052, 15);
+            ctx.fill();
+
+            // नया नाम लिखना
             ctx.font = "bold " + (w * 0.048) + "px Arial";
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
-            // Name box position
-            ctx.fillText(name, w * 0.822, h * 0.928);
+            ctx.fillText(name, w * 0.822, h * 0.938);
         }
     }
 
     function downloadPoster() {
         const link = document.createElement('a');
         link.download = 'Jan_Samarthan_Poster.png';
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL('image/png');
         link.click();
+    }
+
+    // राउंड रेक्टेंगल सपोर्ट के लिए (पुराने ब्राउज़र्स के लिए)
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            this.moveTo(x + r, y);
+            this.arcTo(x + w, y, x + w, y + h, r);
+            this.arcTo(x + w, y + h, x, y + h, r);
+            this.arcTo(x, y + h, x, y, r);
+            this.arcTo(x, y, x + w, y, r);
+            this.closePath();
+            return this;
+        };
     }
 </script>
 </body>
