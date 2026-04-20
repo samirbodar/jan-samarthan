@@ -3,32 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>તમારો ફોટો લગાવો - પરશોતમભાઈ બોડર</title>
+    <title>પોસ્ટર મેકર - પરશોતમભાઈ બોડર</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #fdf2e9; text-align: center; margin: 0; padding: 20px; }
-        .canvas-container { position: relative; display: inline-block; margin-top: 20px; border: 2px solid #ff9933; border-radius: 10px; overflow: hidden; }
-        canvas { max-width: 100%; height: auto; cursor: pointer; }
-        .controls { margin-top: 20px; background: white; padding: 20px; border-radius: 15px; display: inline-block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        input { padding: 10px; margin: 10px; border: 1px solid #ccc; border-radius: 5px; width: 200px; }
-        .btn { background: #ff9933; color: white; padding: 12px 25px; text-decoration: none; border-radius: 50px; font-weight: bold; border: none; cursor: pointer; }
+        body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; text-align: center; margin: 0; padding: 10px; }
+        
+        /* पोस्टर का घेरा */
+        .canvas-container { position: relative; display: inline-block; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); margin-bottom: 20px; }
+        canvas { max-width: 100%; height: auto; display: block; border-radius: 10px; }
+
+        /* कंट्रोल बॉक्स को बड़ा और साफ़ बनाया गया है */
+        .controls-card { 
+            max-width: 500px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        }
+        
+        .section-title { font-size: 20px; font-weight: bold; color: #333; margin-bottom: 15px; }
+        
+        /* इनपुट बॉक्स बड़े करने के लिए */
+        input[type="text"] { 
+            width: 90%; 
+            padding: 15px; 
+            font-size: 18px; 
+            border: 2px solid #ddd; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            outline: none;
+        }
+        
+        input[type="text"]:focus { border-color: #ff9933; }
+
+        /* बड़े बटन्स */
+        .btn-upload { 
+            display: block; 
+            width: 100%; 
+            background: #007bff; 
+            color: white; 
+            padding: 18px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            border-radius: 10px; 
+            border: none; 
+            cursor: pointer; 
+            margin-bottom: 15px;
+        }
+
+        .btn-download { 
+            display: block; 
+            width: 100%; 
+            background: #ff9933; 
+            color: white; 
+            padding: 18px; 
+            font-size: 20px; 
+            font-weight: bold; 
+            border-radius: 10px; 
+            border: none; 
+            cursor: pointer; 
+        }
+
         #imageInput { display: none; }
     </style>
 </head>
 <body>
 
-    <h2>તમારો ફોટો અને નામ સેટ કરો</h2>
-    
     <div class="canvas-container">
         <canvas id="posterCanvas"></canvas>
     </div>
 
-    <div class="controls">
-        <input type="text" id="nameInput" placeholder="તમારું નામ અહિં લખો" oninput="drawCanvas()">
-        <br>
-        <button class="btn" onclick="document.getElementById('imageInput').click()">ફોટો પસંદ કરો</button>
+    <div class="controls-card">
+        <div class="section-title">Step 1: તમારો ફોટો અપલોડ કરો</div>
+        <button class="btn-upload" onclick="document.getElementById('imageInput').click()">📁 ફોટો પસંદ કરો</button>
         <input type="file" id="imageInput" accept="image/*" onchange="handleImage(event)">
-        <br><br>
-        <button class="btn" style="background: #28a745;" onclick="downloadPoster()">પોસ્ટર ડાઉનલોડ કરો</button>
+
+        <div class="section-title">Step 2: તમારું નામ લખો</div>
+        <input type="text" id="nameInput" placeholder="અહિં તમારું નામ લખો..." oninput="drawCanvas()">
+
+        <button class="btn-download" onclick="downloadPoster()">📥 પોસ્ટર ડાઉનલોડ કરો</button>
     </div>
 
     <script>
@@ -39,7 +92,7 @@
         let templateImg = new Image();
         let userImg = null;
         
-        // 1. टेम्पलेट लोड करें (वही फाइल जो आपने GitHub पर डाली है)
+        // टेम्पलेट लोड करें
         templateImg.src = 'poster.jpg'; 
         templateImg.onload = () => {
             canvas.width = templateImg.width;
@@ -47,7 +100,6 @@
             drawCanvas();
         };
 
-        // 2. यूजर की फोटो हैंडल करें
         function handleImage(e) {
             const reader = new FileReader();
             reader.onload = function(event) {
@@ -58,37 +110,33 @@
             reader.readAsDataURL(e.target.files[0]);
         }
 
-        // 3. कैनवस पर सब कुछ ड्रा करें
         function drawCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // टेम्पलेट ड्रा करें
             ctx.drawImage(templateImg, 0, 0);
 
-            // यूजर की फोटो ड्रा करें (सर्कल वाले हिस्से में)
             if (userImg) {
                 ctx.save();
                 ctx.beginPath();
-                // सर्कल की पोजीशन (ये आपके पोस्टर के हिसाब से एडजस्ट की गई है)
-                ctx.arc(810, 785, 175, 0, Math.PI * 2); 
+                // सर्कल की पोजीशन (810, 785) और रेडियस (175) आपके पोस्टर के हिसाब से सेट है
+                ctx.arc(815, 788, 165, 0, Math.PI * 2); 
                 ctx.clip();
-                ctx.drawImage(userImg, 635, 610, 350, 350); // x, y, width, height
+                ctx.drawImage(userImg, 650, 623, 330, 330); 
                 ctx.restore();
             }
 
-            // यूजर का नाम ड्रा करें
+            // नाम की सेटिंग्स
             const name = nameInput.value || "";
-            ctx.font = "bold 40px Arial";
+            ctx.font = "bold 45px Arial";
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
-            ctx.fillText(name, 825, 930); // नाम की पोजीशन
+            // नाम की पोजीशन आपके पोस्टर के ऑरेंज बॉक्स पर
+            ctx.fillText(name, 822, 928); 
         }
 
-        // 4. डाउनलोड फंक्शन
         function downloadPoster() {
             const link = document.createElement('a');
-            link.download = 'My_Campaign_Poster.png';
-            link.href = canvas.toDataURL();
+            link.download = 'My_Poster.png';
+            link.href = canvas.toDataURL('image/png');
             link.click();
         }
     </script>
